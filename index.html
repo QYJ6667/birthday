@@ -81,9 +81,10 @@ img{display:block;max-width:100%}
   text-align:center;padding:80px 24px;background:radial-gradient(100% 60% at 50% 100%,#1b1a26 0%,#0a0c13 55%,#07090f 100%)}
 .lead{margin:0;font-size:15px;letter-spacing:.14em;color:#b9b1a2}
 .lead.strong{font-size:clamp(20px,5.4vw,26px);font-weight:650;letter-spacing:.08em;color:var(--gold);margin-top:6px}
-.final-title{margin:34px 0 0;font-size:clamp(46px,13vw,74px);font-weight:800;letter-spacing:.1em;text-indent:.1em;
+.final-title{margin:0;font-size:clamp(46px,13vw,74px);font-weight:800;letter-spacing:.1em;text-indent:.1em;
   background:linear-gradient(180deg,#fff,var(--gold) 60%,var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
-.final-to{margin:20px 0 0;font-size:13px;color:var(--dim);letter-spacing:.1em}
+.final-to{margin:16px 0 0;font-size:clamp(22px,6.4vw,30px);font-weight:700;color:var(--gold);letter-spacing:.14em}
+.final-to + .lead{margin-top:48px}
 .final-sign{margin:30px 0 0;font-size:13.5px;color:#cfc7b6;letter-spacing:.06em}
 .date{margin:16px 0 0;font-size:11px;letter-spacing:.32em;color:#5f6673}
 .again{margin-top:38px;padding:12px 26px;border-radius:99px;border:1px solid rgba(243,217,164,.35);
@@ -98,15 +99,6 @@ img{display:block;max-width:100%}
 @keyframes fall{to{transform:translateY(105vh) rotate(560deg);opacity:.15}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* music button */
-.music{position:fixed;right:14px;bottom:16px;z-index:60;width:46px;height:46px;border-radius:50%;
-  border:1px solid rgba(243,217,164,.32);background:rgba(8,10,16,.74);backdrop-filter:blur(10px);
-  color:var(--gold);font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:.3s;-webkit-tap-highlight-color:transparent}
-.music.on{border-color:rgba(243,217,164,.85);background:rgba(243,217,164,.15);transform:scale(.96)}
-.music:not(.on){animation:mp 2.8s ease-in-out infinite}
-@keyframes mp{0%,100%{box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 0 0 rgba(243,217,164,.34)}
-  60%{box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 0 12px rgba(243,217,164,0)}}
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:80;background:rgba(4,6,10,.95);display:none;align-items:center;justify-content:center;
   padding:18px;backdrop-filter:blur(6px)}
@@ -152,10 +144,10 @@ img{display:block;max-width:100%}
 </main>
 
 <section class="final">
+  <h2 class="final-title">生日快乐</h2>
+  <p class="final-to"><span data-name>兄弟</span></p>
   <p class="lead">认识你以后，</p>
   <p class="lead strong">我的地图变大了。</p>
-  <h2 class="final-title">生日快乐</h2>
-  <p class="final-to">—— 和 <span data-name>兄弟</span> 一起的这几天</p>
   <p class="final-sign">下一个地方，换我带你去。</p>
   <p class="date">2026 · 10 · 28</p>
   <button class="again" id="again">再放一次</button>
@@ -293,75 +285,10 @@ var CHAPTERS = [
   }
 })();
 </script>
-  <button class="music" id="music" aria-label="背景音乐">♪</button>
   <div class="lb" id="lb"><div class="lb-x" id="lbX">✕</div><img id="lbImg" alt=""></div>
 
   <script>
 (function(){
-  /* ---------- 1. 背景声音：海浪（粉红噪声滤波合成，不加载任何音频文件） ---------- */
-  var btn = document.getElementById('music');
-  var actx = null, master = null, on = false, running = null;
-
-  function noiseBuffer(sec){
-    var len = Math.floor(actx.sampleRate * sec);
-    var buf = actx.createBuffer(1, len, actx.sampleRate);
-    var d = buf.getChannelData(0);
-    var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-    for (var i=0;i<len;i++){
-      var w = Math.random()*2-1;
-      b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
-      b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
-      b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
-      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.12;
-      b6=w*0.115926;
-    }
-    return buf;
-  }
-
-  function build(){
-    var buf = noiseBuffer(7);
-    var s1 = actx.createBufferSource(); s1.buffer = buf; s1.loop = true;
-    var lp = actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=660; lp.Q.value=0.6;
-    var g1 = actx.createGain(); g1.gain.value = 0.11;
-    var l1 = actx.createOscillator(); l1.frequency.value = 0.09;
-    var lg1 = actx.createGain(); lg1.gain.value = 0.065;
-    l1.connect(lg1); lg1.connect(g1.gain);
-    s1.connect(lp); lp.connect(g1); g1.connect(master);
-
-    var s2 = actx.createBufferSource(); s2.buffer = buf; s2.loop = true;
-    var hp = actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=1900;
-    var g2 = actx.createGain(); g2.gain.value = 0.016;
-    var l2 = actx.createOscillator(); l2.frequency.value = 0.13;
-    var lg2 = actx.createGain(); lg2.gain.value = 0.013;
-    l2.connect(lg2); lg2.connect(g2.gain);
-    s2.connect(hp); hp.connect(g2); g2.connect(master);
-
-    s1.start(); s2.start(); l1.start(); l2.start();
-    return { stops:[s1,s2,l1,l2] };
-  }
-
-  if (btn) btn.addEventListener('click', function(){
-    if (!on){
-      if (!actx){
-        var AC = window.AudioContext || window.webkitAudioContext;
-        actx = new AC();
-        master = actx.createGain(); master.gain.value = 0; master.connect(actx.destination);
-      }
-      actx.resume();
-      if (!running) running = build();
-      master.gain.cancelScheduledValues(actx.currentTime);
-      master.gain.setTargetAtTime(0.5, actx.currentTime, 1.0);
-      on = true; btn.classList.add('on'); btn.textContent = '✕';
-    } else {
-      on = false; btn.classList.remove('on'); btn.textContent = '♪';
-      master.gain.setTargetAtTime(0, actx.currentTime, 0.45);
-      var r = running; running = null;
-      setTimeout(function(){
-        if (r) for (var i=0;i<r.stops.length;i++){ try{ r.stops[i].stop(); }catch(e){} }
-      }, 1400);
-    }
-  });
-
   /* ---------- 2. 数据卡数字滚动 ---------- */
   function countUp(el, target, dur){
     var t0 = null;
