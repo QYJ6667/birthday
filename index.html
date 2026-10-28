@@ -45,7 +45,7 @@ img{display:block;max-width:100%}
 @keyframes drift{0%,100%{opacity:.25;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
 
 /* stats */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:52px 0 0;list-style:none;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0;padding:52px 0 0;list-style:none;text-align:center}
 .stats-note{text-align:center;font-size:11px;letter-spacing:.2em;color:var(--dim);margin:14px 0 0}
 .stats li{padding:16px 4px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018)}
 .stats b{display:block;font-size:26px;font-weight:700;color:var(--gold);line-height:1.2;font-variant-numeric:tabular-nums}
@@ -99,6 +99,25 @@ img{display:block;max-width:100%}
 .confetti{position:fixed;top:-14px;width:8px;height:12px;border-radius:2px;z-index:90;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(560deg);opacity:.15}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* music button */
+.music{position:fixed;right:14px;bottom:16px;z-index:60;width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(243,217,164,.32);background:rgba(8,10,16,.74);backdrop-filter:blur(10px);
+  color:var(--gold);font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.3s;-webkit-tap-highlight-color:transparent}
+.music.on{border-color:rgba(243,217,164,.85);background:rgba(243,217,164,.15);transform:scale(.96)}
+.music:not(.on){animation:mp 2.8s ease-in-out infinite}
+@keyframes mp{0%,100%{box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 0 0 rgba(243,217,164,.34)}
+  60%{box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 0 12px rgba(243,217,164,0)}}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:80;background:rgba(4,6,10,.95);display:none;align-items:center;justify-content:center;
+  padding:18px;backdrop-filter:blur(6px)}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.65);animation:lbin .26s ease}
+@keyframes lbin{from{opacity:0;transform:scale(.965)}to{opacity:1;transform:none}}
+.lb-x{position:absolute;top:16px;right:16px;width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:17px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
 </style>
 </head>
 <body>
@@ -122,6 +141,7 @@ img{display:block;max-width:100%}
       <li><b>6</b><span>年</span></li>
       <li><b>2</b><span>个人</span></li>
       <li><b>14</b><span>张照片</span></li>
+      <li><b>4</b><span>公里</span></li>
     </ul>
     <p class="stats-note">2021 年认识　·　差一级，但一直没走散</p>
   </div>
@@ -271,5 +291,80 @@ var CHAPTERS = [
   }
 })();
 </script>
+  <button class="music" id="music" aria-label="背景音乐">♪</button>
+  <div class="lb" id="lb"><div class="lb-x" id="lbX">✕</div><img id="lbImg" alt=""></div>
+
+  <script>
+  (function(){
+    /* ---------- 背景音乐：纯 Web Audio 合成，不加载任何音频文件 ---------- */
+    var btn = document.getElementById('music');
+    var actx = null, master = null, on = false, timer = null;
+    var STEP = 0.46;
+    var SEQ  = [76,79,81,84, 79,76,72,74, 76,79,84,81, 79,76,74,72];
+    var BASS = [48,43,45,41];
+    function f(m){ return 440 * Math.pow(2,(m-69)/12); }
+
+    function bell(midi,t,dur,vol){
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'sine'; o.frequency.value = f(midi);
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol,t+0.014);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.05);
+      var o2 = actx.createOscillator(), g2 = actx.createGain();
+      o2.type = 'sine'; o2.frequency.value = f(midi+12);
+      g2.gain.setValueAtTime(0.0001,t);
+      g2.gain.exponentialRampToValueAtTime(vol*0.2,t+0.014);
+      g2.gain.exponentialRampToValueAtTime(0.0001,t+dur*0.5);
+      o2.connect(g2); g2.connect(master); o2.start(t); o2.stop(t+dur*0.55);
+    }
+    function pad(midi,t,dur,vol){
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'triangle'; o.frequency.value = f(midi);
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.linearRampToValueAtTime(vol,t+1.0);
+      g.gain.linearRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.1);
+    }
+    function bar(){
+      if (!on) return;
+      var t = actx.currentTime + 0.15;
+      for (var i=0;i<SEQ.length;i++) bell(SEQ[i], t+i*STEP, 2.0, 0.075);
+      for (var b=0;b<BASS.length;b++) pad(BASS[b], t+b*STEP*4, STEP*4.05, 0.04);
+      timer = setTimeout(bar, (SEQ.length*STEP - 0.4)*1000);
+    }
+    btn.addEventListener('click', function(){
+      if (!on) {
+        if (!actx) {
+          var AC = window.AudioContext || window.webkitAudioContext;
+          actx = new AC(); master = actx.createGain(); master.gain.value = 0.5;
+          master.connect(actx.destination);
+        }
+        actx.resume();
+        master.gain.cancelScheduledValues(actx.currentTime);
+        master.gain.setValueAtTime(0.5, actx.currentTime);
+        on = true; btn.classList.add('on'); btn.textContent = '✕'; bar();
+      } else {
+        on = false; btn.classList.remove('on'); btn.textContent = '♪';
+        clearTimeout(timer);
+        master.gain.setTargetAtTime(0, actx.currentTime, 0.3);
+        setTimeout(function(){ if (!on && actx) actx.suspend(); }, 1100);
+      }
+    });
+
+    /* ---------- 点图放大 ---------- */
+    var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
+    document.getElementById('story').addEventListener('click', function(e){
+      var el = e.target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'IMG') { lbImg.src = el.currentSrc || el.src; lb.classList.add('on'); return; }
+        el = el.parentNode;
+      }
+    });
+    function closeLb(){ lb.classList.remove('on'); setTimeout(function(){ lbImg.src=''; }, 200); }
+    document.getElementById('lbX').addEventListener('click', closeLb);
+    lb.addEventListener('click', function(e){ if (e.target === lb) closeLb(); });
+  })();
+  </script>
 </body>
 </html>
