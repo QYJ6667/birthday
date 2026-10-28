@@ -45,7 +45,8 @@ img{display:block;max-width:100%}
 @keyframes drift{0%,100%{opacity:.25;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
 
 /* stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0;padding:52px 0 10px;list-style:none;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:52px 0 0;list-style:none;text-align:center}
+.stats-note{text-align:center;font-size:11px;letter-spacing:.2em;color:var(--dim);margin:14px 0 0}
 .stats li{padding:16px 4px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018)}
 .stats b{display:block;font-size:26px;font-weight:700;color:var(--gold);line-height:1.2;font-variant-numeric:tabular-nums}
 .stats span{font-size:10.5px;letter-spacing:.12em;color:var(--dim)}
@@ -110,7 +111,7 @@ img{display:block;max-width:100%}
     <div class="kicker">2026 · 10 · 28</div>
     <h1 class="hero-title"><span>生日</span><span>快乐</span></h1>
     <p class="hero-sub">给 <b data-name>兄弟</b></p>
-    <p class="hero-line">今年不想只发一句生日快乐。<br>把我们一起走过的那几天，做成了这个网站。</p>
+    <p class="hero-line">今年不想只发一句生日快乐。<br>认识你 6 年了，把我们走过的那几天，做成了这个网站。</p>
   </div>
   <div class="hint"><i></i>往下滑</div>
 </header>
@@ -118,11 +119,11 @@ img{display:block;max-width:100%}
 <main>
   <div class="wrap">
     <ul class="stats reveal">
-      <li><b>4</b><span>天</span></li>
-      <li><b>3</b><span>个人</span></li>
+      <li><b>6</b><span>年</span></li>
       <li><b>14</b><span>张照片</span></li>
       <li><b>4</b><span>公里</span></li>
     </ul>
+    <p class="stats-note">2021 → 2026　·　10.28　·　3·2·1</p>
   </div>
   <div id="story"></div>
   <section class="quote reveal"><p>想在哪里躺着，<br>就在哪里躺。</p></section>
@@ -162,11 +163,11 @@ var CHAPTERS = [
   {num:"05", title:"走四公里看一场夜景", sub:"晚上", items:[
     {img:"07", text:"来了深圳你一直说要来这边看一下，我们走了 4 公里路才到这个地方，腿都快断了哈哈哈。"},
     {img:"06", text:"你带我来这，我才知道这里居然有这样的一个风景，比个心吧～"},
-    {img:"05", text:"你跟我说这栋高楼很好看，当时我觉得确实挺不一样的。看到你拍照那一刻，我才想起来这是你很喜欢的想法。"}
+    {img:"05", text:"你跟我说这栋高楼很好看，当时我觉得确实挺不一样的。看到你拍照那一刻，我才想起来这是你很喜欢的一个地方。"}
   ]},
-  {num:"06", title:"出海", sub:"最后一个上午", items:[
+  {num:"06", title:"出海", sub:"回忆最密集的一趟", items:[
     {img:"03", text:"去海中心之前的小港湾，光是看着阳光洒在墙面就觉得很治愈…"},
-    {img:"01", text:"两个人交叉比六，那个时候是在早上去看大海。我们从海岸线的一个小港湾乘船，一路划到距离海岸线几百米的位置。虽然在朋友的一些邀请下还是有一些不好意思。但我们两个站在那里，真正摆出 pose 时还是很开心！"},
+    {img:"01", text:"那个时候是在早上去看大海。我们从海岸线的一个小港湾乘船，一路开到距离海岸线几百米的位置。贪婪着呼吸着大海的味道，虽然朋友叫我们去拍两张我们还是有一点拘谨。但站在那里真正摆出 pose 时还是很开心！"},
     {img:"04", text:"我觉得我们两个合照还是很少，开心的时候就应该多拍一些，或许是记录或许是回忆。"},
     {img:"02", text:"你和宝哥在那里聊天时，我那时觉得我们很自由，想在哪里躺着就在哪里躺。只是在那里躺着就已经很开心了。"}
   ]}
