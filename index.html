@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07090f">
+<title>生日快乐</title>
+<style>
+:root{
+  --bg:#07090f; --bg2:#0c1018; --ink:#ece7dd; --dim:#9aa1ad;
+  --gold:#f3d9a4; --gold2:#e8b96a; --orange:#ff7a3c; --sea:#4aa8e8;
+  --line:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  line-height:1.75;overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+.wrap{width:100%;max-width:680px;margin:0 auto;padding:0 22px}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sea),var(--gold),var(--orange));transition:width .12s linear}
+
+/* hero */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(120% 80% at 50% 12%,#1a2033 0%,#0b0f18 46%,#07090f 100%)}
+.hero:after{content:"";position:absolute;left:50%;top:52%;width:150vmax;height:150vmax;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(232,185,106,.10) 0%,rgba(232,185,106,0) 42%);pointer-events:none}
+#sky{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-inner{position:relative;z-index:2;text-align:center;padding:0 24px}
+.kicker{font-size:12px;letter-spacing:.42em;color:var(--dim);text-indent:.42em;margin-bottom:26px;animation:up 1s .1s both}
+.hero-title{margin:0;font-size:clamp(58px,17vw,104px);line-height:1.02;font-weight:800;letter-spacing:.06em;text-indent:.06em}
+.hero-title span{display:block;background:linear-gradient(175deg,#ffffff 6%,var(--gold) 52%,var(--gold2) 88%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:up 1.1s both}
+.hero-title span:nth-child(1){animation-delay:.18s}
+.hero-title span:nth-child(2){animation-delay:.34s}
+.hero-sub{margin:30px 0 0;font-size:15px;letter-spacing:.22em;color:#cfc7b6;animation:up 1s .6s both}
+.hero-sub b{color:var(--gold);font-weight:600}
+.hero-line{margin:14px auto 0;max-width:19em;font-size:13.5px;line-height:2;color:var(--dim);animation:up 1s .8s both}
+.hint{position:absolute;left:0;right:0;bottom:34px;z-index:2;text-align:center;font-size:11px;letter-spacing:.3em;color:#6f7683}
+.hint i{display:block;width:1px;height:34px;margin:8px auto 0;background:linear-gradient(180deg,var(--gold),transparent);animation:drift 2.2s ease-in-out infinite}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes drift{0%,100%{opacity:.25;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0;padding:52px 0 10px;list-style:none;text-align:center}
+.stats li{padding:16px 4px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018)}
+.stats b{display:block;font-size:26px;font-weight:700;color:var(--gold);line-height:1.2;font-variant-numeric:tabular-nums}
+.stats span{font-size:10.5px;letter-spacing:.12em;color:var(--dim)}
+
+/* chapter */
+.chapter{padding-top:64px}
+.ch-head{position:relative;padding:26px 0 6px;border-top:1px solid var(--line)}
+.ch-num{font-size:12px;letter-spacing:.34em;color:var(--orange);font-variant-numeric:tabular-nums}
+.ch-title{margin:8px 0 2px;font-size:clamp(27px,7.6vw,36px);font-weight:750;letter-spacing:.02em;line-height:1.25}
+.ch-sub{margin:0;font-size:12.5px;color:var(--dim);letter-spacing:.06em}
+
+/* card */
+.card{margin:30px 0 0;border-radius:20px;overflow:hidden;background:#10141d;border:1px solid var(--line);
+  box-shadow:0 26px 60px -28px rgba(0,0,0,.95);opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.card.in{opacity:1;transform:none}
+.ph{position:relative;background:linear-gradient(135deg,#141924,#0e1119)}
+.ph:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.05) 50%,transparent 80%);background-size:220% 100%;animation:sheen 1.8s linear infinite}
+.ph img{position:relative;width:100%;height:auto;opacity:0;transition:opacity .7s ease,transform 1.4s cubic-bezier(.2,.7,.2,1);transform:scale(1.04)}
+.ph img.ok{opacity:1}
+.card.in .ph img{transform:scale(1)}
+.card figcaption{padding:20px 20px 24px}
+.card .tag{display:inline-block;font-size:10.5px;letter-spacing:.24em;color:var(--gold2);opacity:.85;margin-bottom:10px}
+.card p{margin:0;font-size:15.5px;line-height:1.95;color:#ded8cc}
+@keyframes sheen{from{background-position:120% 0}to{background-position:-120% 0}}
+.ph.loaded:before{display:none}
+
+/* quote */
+.quote{padding:96px 22px;text-align:center}
+.quote p{margin:0;font-size:clamp(24px,6.6vw,32px);line-height:1.66;font-weight:650;letter-spacing:.02em;
+  background:linear-gradient(170deg,#fff,var(--gold) 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* final */
+.final{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px;background:radial-gradient(100% 60% at 50% 100%,#1b1a26 0%,#0a0c13 55%,#07090f 100%)}
+.lead{margin:0;font-size:15px;letter-spacing:.14em;color:#b9b1a2}
+.lead.strong{font-size:clamp(20px,5.4vw,26px);font-weight:650;letter-spacing:.08em;color:var(--gold);margin-top:6px}
+.final-title{margin:34px 0 0;font-size:clamp(46px,13vw,74px);font-weight:800;letter-spacing:.1em;text-indent:.1em;
+  background:linear-gradient(180deg,#fff,var(--gold) 60%,var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.final-to{margin:20px 0 0;font-size:13px;color:var(--dim);letter-spacing:.1em}
+.final-sign{margin:30px 0 0;font-size:13.5px;color:#cfc7b6;letter-spacing:.06em}
+.date{margin:16px 0 0;font-size:11px;letter-spacing:.32em;color:#5f6673}
+.again{margin-top:38px;padding:12px 26px;border-radius:99px;border:1px solid rgba(243,217,164,.35);
+  background:rgba(243,217,164,.06);color:var(--gold);font-size:13px;letter-spacing:.14em;font-family:inherit;cursor:pointer}
+.again:active{transform:scale(.97)}
+.foot{padding:0 0 46px;text-align:center;font-size:10.5px;letter-spacing:.2em;color:#4a505b}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+.confetti{position:fixed;top:-14px;width:8px;height:12px;border-radius:2px;z-index:90;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(560deg);opacity:.15}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="progress"><i id="bar"></i></div>
+
+<header class="hero">
+  <canvas id="sky"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">2026 · 10 · 28</div>
+    <h1 class="hero-title"><span>生日</span><span>快乐</span></h1>
+    <p class="hero-sub">给 <b data-name>兄弟</b></p>
+    <p class="hero-line">今年不想只发一句生日快乐。<br>把我们一起走过的那几天，做成了这个网站。</p>
+  </div>
+  <div class="hint"><i></i>往下滑</div>
+</header>
+
+<main>
+  <div class="wrap">
+    <ul class="stats reveal">
+      <li><b>4</b><span>天</span></li>
+      <li><b>3</b><span>个人</span></li>
+      <li><b>14</b><span>张照片</span></li>
+      <li><b>4</b><span>公里</span></li>
+    </ul>
+  </div>
+  <div id="story"></div>
+  <section class="quote reveal"><p>想在哪里躺着，<br>就在哪里躺。</p></section>
+</main>
+
+<section class="final">
+  <p class="lead">认识你以后，</p>
+  <p class="lead strong">我的地图变大了。</p>
+  <h2 class="final-title">生日快乐</h2>
+  <p class="final-to">—— 和 <span data-name>兄弟</span> 一起的这几天</p>
+  <p class="final-sign">下一个地方，换我带你去。</p>
+  <p class="date">2026 · 10 · 28</p>
+  <button class="again" id="again">再放一次</button>
+</section>
+
+<p class="foot">RECORDED IN SHENZHEN</p>
+
+<script>
+var NAME = "德隆";
+
+var CHAPTERS = [
+  {num:"01", title:"见面", sub:"9 月 · 好久没见", items:[
+    {img:"10", text:"好久没见了，刚见面还是会傻笑哈哈哈～"}
+  ]},
+  {num:"02", title:"到深圳", sub:"第二天 · 这座城市先给了个好脸色", items:[
+    {img:"09", text:"刚到深圳，感觉这地方挺好看的，拍个照记录一下。"},
+    {img:"14", text:"一起来看这一个深圳之眼，真正到的时候还是挺震撼的，你还跟我说有一个电梯是网红打卡点呢。"}
+  ]},
+  {num:"03", title:"两个小时的巨人", sub:"同一座商场 · 白天", items:[
+    {img:"11", text:"我们路过这一只甲虫的时候，你没在意它，但我觉得还是挺帅的。"},
+    {img:"12", text:"为了这个巨人我们兜兜转转走了 2 小时，真正看到他的时候还是感觉很震撼的！"},
+    {img:"13", text:"这个小企鹅还挺好看的，看到你拍照，我也拍了一张，没想到后来你发朋友圈了哈哈。"}
+  ]},
+  {num:"04", title:"肉比饭多", sub:"下午 · 一碗宝藏猪脚饭", items:[
+    {img:"08", text:"找到的一家宝藏猪脚饭，第一次见肉比饭多的猪脚饭。不加饭猪脚都吃不下！"}
+  ]},
+  {num:"05", title:"走四公里看一场夜景", sub:"晚上", items:[
+    {img:"07", text:"来了深圳你一直说要来这边看一下，我们走了 4 公里路才到这个地方，腿都快断了哈哈哈。"},
+    {img:"06", text:"你带我来这，我才知道这里居然有这样的一个风景，比个心吧～"},
+    {img:"05", text:"你跟我说这栋高楼很好看，当时我觉得确实挺不一样的。看到你拍照那一刻，我才想起来这是你很喜欢的想法。"}
+  ]},
+  {num:"06", title:"出海", sub:"最后一个上午", items:[
+    {img:"03", text:"去海中心之前的小港湾，光是看着阳光洒在墙面就觉得很治愈…"},
+    {img:"01", text:"两个人交叉比六，那个时候是在早上去看大海。我们从海岸线的一个小港湾乘船，一路划到距离海岸线几百米的位置。虽然在朋友的一些邀请下还是有一些不好意思。但我们两个站在那里，真正摆出 pose 时还是很开心！"},
+    {img:"04", text:"我觉得我们两个合照还是很少，开心的时候就应该多拍一些，或许是记录或许是回忆。"},
+    {img:"02", text:"你和宝哥在那里聊天时，我那时觉得我们很自由，想在哪里躺着就在哪里躺。只是在那里躺着就已经很开心了。"}
+  ]}
+];
+
+(function(){
+  var out = "";
+  for (var c = 0; c < CHAPTERS.length; c++) {
+    var ch = CHAPTERS[c];
+    out += '<section class="chapter wrap">';
+    out += '<div class="ch-head reveal"><div class="ch-num">' + ch.num + '</div>';
+    out += '<h2 class="ch-title">' + ch.title + '</h2>';
+    out += '<p class="ch-sub">' + ch.sub + '</p></div>';
+    for (var i = 0; i < ch.items.length; i++) {
+      var it = ch.items[i];
+      out += '<figure class="card">';
+      out += '<div class="ph"><img loading="lazy" src="img/' + it.img + '.jpg" alt="" onload="this.classList.add(\'ok\');this.parentNode.classList.add(\'loaded\')"></div>';
+      out += '<figcaption><span class="tag">NO. ' + it.img + '</span><p>' + it.text + '</p></figcaption>';
+      out += '</figure>';
+    }
+    out += '</section>';
+  }
+  document.getElementById('story').innerHTML = out;
+
+  var nameEls = document.querySelectorAll('[data-name]');
+  for (var n = 0; n < nameEls.length; n++) nameEls[n].textContent = NAME;
+
+  var io = new IntersectionObserver(function(es){
+    for (var k = 0; k < es.length; k++) {
+      if (es[k].isIntersecting) { es[k].target.classList.add('in'); io.unobserve(es[k].target); }
+    }
+  }, {threshold:0.12, rootMargin:"0px 0px -8% 0px"});
+  var targets = document.querySelectorAll('.card,.reveal,.ch-head');
+  for (var t = 0; t < targets.length; t++) io.observe(targets[t]);
+
+  var bar = document.getElementById('bar');
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? h.scrollTop / max : 0;
+    bar.style.width = (p * 100).toFixed(2) + "%";
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  var fired = false;
+  var fin = document.querySelector('.final');
+  var io2 = new IntersectionObserver(function(es){
+    for (var k = 0; k < es.length; k++) {
+      if (es[k].isIntersecting && !fired) { fired = true; confetti(); }
+    }
+  }, {threshold:0.35});
+  if (fin) io2.observe(fin);
+
+  function confetti(){
+    var colors = ["#f3d9a4","#ff7a3c","#4aa8e8","#ffffff","#e8b96a","#e45b5b"];
+    for (var i = 0; i < 90; i++) {
+      var d = document.createElement("i");
+      d.className = "confetti";
+      d.style.left = (Math.random() * 100).toFixed(2) + "vw";
+      d.style.background = colors[i % colors.length];
+      d.style.animationDelay = (Math.random() * 0.9).toFixed(2) + "s";
+      d.style.animationDuration = (1.7 + Math.random() * 1.5).toFixed(2) + "s";
+      d.style.width = (5 + Math.random() * 6).toFixed(1) + "px";
+      d.style.height = (8 + Math.random() * 8).toFixed(1) + "px";
+      d.style.opacity = (0.65 + Math.random() * 0.35).toFixed(2);
+      document.body.appendChild(d);
+      setTimeout(function(el){ return function(){ el.remove(); }; }(d), 3600);
+    }
+  }
+  var btn = document.getElementById("again");
+  if (btn) btn.addEventListener("click", function(e){ e.preventDefault(); confetti(); });
+
+  var c = document.getElementById("sky");
+  if (c) {
+    var ctx = c.getContext("2d"), w = 0, h = 0, pts = [], dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function resize(){
+      w = c.clientWidth; h = c.clientHeight;
+      c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      pts = [];
+      var n = Math.min(64, Math.round(w * h / 11000));
+      for (var i = 0; i < n; i++) pts.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.5+0.4, p:Math.random()*6.28, s:Math.random()*0.3+0.06});
+    }
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        p.p += 0.016; p.y -= p.s;
+        if (p.y < -6) { p.y = h + 6; p.x = Math.random() * w; }
+        var a = 0.18 + 0.5 * (0.5 + 0.5 * Math.sin(p.p));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+        ctx.fillStyle = "rgba(243,217,164," + a.toFixed(3) + ")";
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    resize(); draw();
+    window.addEventListener("resize", resize);
+  }
+})();
+</script>
+</body>
+</html>
